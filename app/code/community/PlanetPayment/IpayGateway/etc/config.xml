@@ -130,6 +130,12 @@
                 <ipay_exchange_rate>
                     <to_order_payment>*</to_order_payment>
                 </ipay_exchange_rate>
+				<ipay_markup>
+                    <to_order_payment>*</to_order_payment>
+                </ipay_markup>
+				<ipay_service_used>
+                    <to_order_payment>*</to_order_payment>
+                </ipay_service_used>
             </sales_convert_quote_payment>
 
 	<!-- Order to Order (edit) -->
@@ -403,6 +409,20 @@
                 </observers>
             </sales_order_place_before>
         </events>
+		<template>
+			<email>
+				<sales_email_order_template translate="label" module="sales">
+					<label>New Order</label>
+					<file>sales/ipay/order_new.html</file>
+					<type>html</type>
+				</sales_email_order_template>
+				<sales_email_order_guest_template translate="label" module="sales">
+					<label>New Order for Guest</label>
+					<file>sales/ipay/order_new_guest.html</file>
+					<type>html</type>
+				</sales_email_order_guest_template>
+			</email>
+		</template>
     </global>
     <frontend>
         <layout>

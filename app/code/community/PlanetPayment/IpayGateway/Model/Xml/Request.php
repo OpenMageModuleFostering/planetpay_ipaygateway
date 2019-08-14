@@ -1,5 +1,4 @@
 <?php
-
 /**
  * One Pica
  *
@@ -112,17 +111,12 @@ class PlanetPayment_IpayGateway_Model_Xml_Request extends PlanetPayment_IpayGate
     public function generateRequestForPycAuth() {
         try {
             $payment = $this->getPayment();
-
             $profile = $this->_getProfile($payment->getIpayProfileId());
             $quote = Mage::helper('ipay')->getQuote();
-            
             $billingAddress = $quote->getBillingAddress();
-            
             $hasEncryption = $this->_hasEncryption();
-
             $key = $this->_getConfig('key', 'general');
             $encryption = $hasEncryption ? '1' : '0';
-
             $request = $this->_getRootNode();
             $transaction = $request->addChild('TRANSACTION');
             $fields = $transaction->addChild('FIELDS');
@@ -142,13 +136,14 @@ class PlanetPayment_IpayGateway_Model_Xml_Request extends PlanetPayment_IpayGate
                 $fields->addChild('FIRST_NAME', $billingAddress->getFirstname());
                 $fields->addChild('LAST_NAME', $billingAddress->getLastname());
                 $fields->addChild('ADDRESS', $this->_conditionAddress($billingAddress->getStreet(1)));
-				$fields->addChild('STATE', $billingAddress->getRegionCode());
+		$fields->addChild('STATE', $billingAddress->getRegionCode());
                 $fields->addChild('CITY', $billingAddress->getCity());
                 $fields->addChild('POSTAL_CODE', $this->_conditionPostalCode($billingAddress->getPostcode()));
             }
 
             $fields->addChild('AMOUNT', $this->getAmount());
             $fields->addChild('CURRENCY_CODE', $this->_getCurrencyIsoCode($this->getNativeCurrency()));
+            
             //If a different currecy is selected by the customer
             if ($payment->getId() && $payment->getIpayCurrencyCode()) {
                 if ($payment->getIpayCurrencyCode() == $this->getNativeCurrency()) {
@@ -160,13 +155,13 @@ class PlanetPayment_IpayGateway_Model_Xml_Request extends PlanetPayment_IpayGate
                 $fields->addChild('CURRENCY_INDICATOR', '0');
             }
             $fields->addChild('TRANSACTION_INDICATOR', '7');
-			$fields->addChild('FESP_IND', '9');
-			$fields->addChild('USER_DATA_0', $this->_getClientName());
-
+            $fields->addChild('FESP_IND', '9');
+            //Appear duplicate data so commenting it out..@Diwakar - Date 
+            //$fields->addChild('USER_DATA_0', $this->_getClientName());
+            //Sending Few Additional data to Gateway
+            $this->addAdditionalData($fields, true);
             $this->setTransactionForLog($request);
-
-
-            if ($hasEncryption) {
+            if($hasEncryption) {
                 $this->_encryptRequest($request);
             }
             $this->setTransaction($request);
@@ -176,7 +171,6 @@ class PlanetPayment_IpayGateway_Model_Xml_Request extends PlanetPayment_IpayGate
 
         return $this;
     }
-
     /**
      * Generates the Transaction Xml for authorization
      * @return PlanetPayment_IpayGateway_Model_Xml_Request 
@@ -226,12 +220,11 @@ class PlanetPayment_IpayGateway_Model_Xml_Request extends PlanetPayment_IpayGate
                 $fields->addChild('CURRENCY_INDICATOR', '0');
             }
             $fields->addChild('TRANSACTION_INDICATOR', '7');
-			$fields->addChild('FESP_IND', '9');
-			$fields->addChild('USER_DATA_0', $this->_getClientName());
-
+            $fields->addChild('FESP_IND', '9');
+            $fields->addChild('USER_DATA_0', $this->_getClientName());
+            //Sending Few Additional data to Gateway
+            $this->addAdditionalData($fields, true);
             $this->setTransactionForLog($request);
-
-
             if ($hasEncryption) {
                 $this->_encryptRequest($request);
             }
@@ -277,15 +270,13 @@ class PlanetPayment_IpayGateway_Model_Xml_Request extends PlanetPayment_IpayGate
                 $fields->addChild('ACCOUNT_NUMBER', $payment->getCcNumber());
             }
             $fields->addChild('QUERY_TYPE', '0');
-			$fields->addChild('FESP_IND', '9');
-
+	    $fields->addChild('FESP_IND', '9');
+            //Sending Few Additional data to Gateway
+            $this->addAdditionalData($fields, true);
             $this->setTransactionForLog($request);
-
-
             if ($hasEncryption) {
                 $this->_encryptRequest($request);
             }
-
             $this->setTransaction($request);
         } catch (Exception $e) {
             Mage::throwException($e->getmessage());
@@ -315,8 +306,9 @@ class PlanetPayment_IpayGateway_Model_Xml_Request extends PlanetPayment_IpayGate
             $fields->addChild('SERVICE_TYPE', 'RATE');
             $fields->addChild('SERVICE_SUBTYPE', 'QUERY');
             $fields->addChild('QUERY_TYPE', '1');
-			$fields->addChild('FESP_IND', '9');
-
+            $fields->addChild('FESP_IND', '9');
+            //Sending Few Additional data to Gateway
+            $this->addAdditionalData($fields, true);
             $this->setTransactionForLog($request);
             $this->setCurrencyRate(true);
 
@@ -366,15 +358,13 @@ class PlanetPayment_IpayGateway_Model_Xml_Request extends PlanetPayment_IpayGate
                 $fields->addChild('EXPIRATION', $this->_getCcExpiration($profile->getExpirationMonth(), $profile->getExpirationYear()));
                 $fields->addChild('CVV', $profile->getCardCode());
                 $fields->addChild('BILLING_TRANSACTION', '2');
-				$fields->addChild('FESP_IND', '9');
-
+		$fields->addChild('FESP_IND', '9');
+                //Sending Few Additional data to Gateway
+                $this->addAdditionalData($fields, true);
                 $this->setTransactionForLog($request);
-
-
                 if ($hasEncryption) {
                     $this->_encryptRequest($request);
                 }
-
                 $this->setTransaction($request);
             } else {
                 Mage::throwException("failed to create payment profile");
@@ -415,15 +405,13 @@ class PlanetPayment_IpayGateway_Model_Xml_Request extends PlanetPayment_IpayGate
                 $fields->addChild('POSTAL_CODE', $this->_conditionPostalCode($profile->getZip()));
                 $fields->addChild('STATE', htmlentities($profile->getState(), ENT_QUOTES));
                 $fields->addChild('COUNTRY', htmlentities($profile->getCountry(), ENT_QUOTES));
-				$fields->addChild('FESP_IND', '9');
-
+		$fields->addChild('FESP_IND', '9');
+                //Sending Few Additional data to Gateway
+                $this->addAdditionalData($fields, true);
                 $this->setTransactionForLog($request);
-
-
                 if ($hasEncryption) {
                     $this->_encryptRequest($request);
                 }
-
                 $this->setTransaction($request);
             } else {
                 Mage::throwException("failed to Update payment profile");
@@ -461,11 +449,10 @@ class PlanetPayment_IpayGateway_Model_Xml_Request extends PlanetPayment_IpayGate
                 $fields->addChild('TRANSACTION_INDICATOR', '7');
                 $fields->addChild('EXPIRATION', $this->_getCcExpiration($profile->getExpirationMonth(), $profile->getExpirationYear()));
                 $fields->addChild('CVV', $profile->getCardCode());
-				$fields->addChild('FESP_IND', '9');
-
+		$fields->addChild('FESP_IND', '9');
+                //Sending Few Additional data to Gateway
+                $this->addAdditionalData($fields, true);
                 $this->setTransactionForLog($request);
-
-
                 if ($hasEncryption) {
                     $this->_encryptRequest($request);
                 } else {
@@ -505,8 +492,9 @@ class PlanetPayment_IpayGateway_Model_Xml_Request extends PlanetPayment_IpayGate
                 $fields->addChild('TERMINAL_ID', $this->_getConfig('terminal_id', 'general'));
                 $fields->addChild('PIN', $this->_getConfig('pin', 'general'));
                 $fields->addChild('CLIENT_ID', $profile->getClientId());
-				$fields->addChild('FESP_IND', '9');
-
+		$fields->addChild('FESP_IND', '9');
+                //Sending Few Additional data to Gateway
+                $this->addAdditionalData($fields, false);
                 $this->setTransactionForLog($request);
 
                 if ($hasEncryption) {
@@ -542,8 +530,9 @@ class PlanetPayment_IpayGateway_Model_Xml_Request extends PlanetPayment_IpayGate
             $fields->addChild('SERVICE_FORMAT', '0000');
             $fields->addChild('TERMINAL_ID', $this->_getConfig('terminal_id', 'general'));
             $fields->addChild('PIN', $this->_getConfig('pin', 'general'));
-			$fields->addChild('FESP_IND', '9');
-
+            $fields->addChild('FESP_IND', '9');
+            //Sending Few Additional data to Gateway
+            $this->addAdditionalData($fields, false);
             $this->setTransactionForLog($request);
 
             if ($hasEncryption) {
@@ -557,7 +546,6 @@ class PlanetPayment_IpayGateway_Model_Xml_Request extends PlanetPayment_IpayGate
 
         return $this;
     }
-
     public function generateRequestForCapture() {
         try {
             $payment = $this->getPayment();
@@ -595,14 +583,13 @@ class PlanetPayment_IpayGateway_Model_Xml_Request extends PlanetPayment_IpayGate
                 $fields->addChild('SERVICE_SUBTYPE', 'CAPTURE');
                 $fields->addChild('AMOUNT', $this->getAmountInStoreCurrency());
                 $fields->addChild('PIN', $this->_getConfig('pin', 'general'));
-				$fields->addChild('FESP_IND', '9');
-
+		$fields->addChild('FESP_IND', '9');
+                //Sending Few Additional data to Gateway
+                $this->addAdditionalData($fields, true);
                 $this->setTransactionForLog($request);
-
                 if ($hasEncryption) {
                     $this->_encryptRequest($request);
                 }
-
                 $this->setTransaction($request);
             } else {
                 Mage::throwException("Unable to capture");
@@ -610,11 +597,9 @@ class PlanetPayment_IpayGateway_Model_Xml_Request extends PlanetPayment_IpayGate
         } catch (Exception $e) {
             Mage::throwException($e->getmessage());
         }
-
         return $this;
     }
-    
-     public function generateRequestForSale() {
+    public function generateRequestForSale() {
         try {
             $payment = $this->getPayment();
             $quote = Mage::helper('ipay')->getQuote();
@@ -646,7 +631,7 @@ class PlanetPayment_IpayGateway_Model_Xml_Request extends PlanetPayment_IpayGate
                 $fields->addChild('FIRST_NAME', $billingAddress->getFirstname());
                 $fields->addChild('LAST_NAME', $billingAddress->getLastname());
                 $fields->addChild('ADDRESS', $this->_conditionAddress($billingAddress->getStreet(1)));
-				$fields->addChild('STATE', $billingAddress->getRegionCode());
+		$fields->addChild('STATE', $billingAddress->getRegionCode());
                 $fields->addChild('CITY', $billingAddress->getCity());
                 $fields->addChild('POSTAL_CODE', $this->_conditionPostalCode($billingAddress->getPostcode()));
             }
@@ -671,9 +656,10 @@ class PlanetPayment_IpayGateway_Model_Xml_Request extends PlanetPayment_IpayGate
             }
             $fields->addChild('ENTRY_MODE', '3');
             $fields->addChild('TRANSACTION_INDICATOR', '7');
-			$fields->addChild('FESP_IND', '9');
-			$fields->addChild('USER_DATA_0', $this->_getClientName());
-			
+            $fields->addChild('FESP_IND', '9');
+            $fields->addChild('USER_DATA_0', $this->_getClientName());
+            //Sending Few Additional data to Gateway
+            $this->addAdditionalData($fields, true);
             $this->setTransactionForLog($request);
             
             if ($hasEncryption) {
@@ -705,14 +691,13 @@ class PlanetPayment_IpayGateway_Model_Xml_Request extends PlanetPayment_IpayGate
                 $fields->addChild('SERVICE_TYPE', 'DEBIT');
                 $fields->addChild('SERVICE_SUBTYPE', 'VOID');
                 $fields->addChild('PIN', $this->_getConfig('pin', 'general'));
-				$fields->addChild('FESP_IND', '9');
-
+		$fields->addChild('FESP_IND', '9');
+                //Sending Few Additional data to Gateway
+                $this->addAdditionalData($fields, true);
                 $this->setTransactionForLog($request);
-
                 if ($hasEncryption) {
                     $this->_encryptRequest($request);
                 }
-
                 $this->setTransaction($request);
             } else {
                 Mage::throwException("Unable to Void");
@@ -762,14 +747,13 @@ class PlanetPayment_IpayGateway_Model_Xml_Request extends PlanetPayment_IpayGate
                 $fields->addChild('SERVICE_TYPE', 'CREDIT');
                 $fields->addChild('SERVICE_SUBTYPE', 'REFUND');
                 $fields->addChild('PIN', $this->_getConfig('pin', 'general'));
-				$fields->addChild('FESP_IND', '9');
-                
+		$fields->addChild('FESP_IND', '9');
+                //Sending Few Additional data to Gateway
+                $this->addAdditionalData($fields, true);
                 $this->setTransactionForLog($request);
-
                 if ($hasEncryption) {
                     $this->_encryptRequest($request);
                 }
-
                 $this->setTransaction($request);
             } else {
                 Mage::throwException("Unable to Refund");
@@ -777,14 +761,45 @@ class PlanetPayment_IpayGateway_Model_Xml_Request extends PlanetPayment_IpayGate
         } catch (Exception $e) {
             Mage::throwException($e->getmessage());
         }
-
         return $this;
     }
-
+     /**
+     * Adding Order Id and Incremented Order id and Customer Ip to Request XML
+     * 
+     * @param obj $fields
+     * */
+    public function addAdditionalData($fields, $frontrequest = false) {
+        $payment = $this->getPayment();
+        if ($payment) {
+            $order = $payment->getOrder(); //to create a order object
+            //Set User data
+            if ($order) {
+                $fields->addChild('TICKET', $order->getIncrementId());
+                $fields->addChild('USER_DATA_1', $order->getId());
+                $fields->addChild('CLIENT_IP', $order->getData('remote_ip'));
+                //Get Store Details from where order placed...
+                $store = str_replace(array("<br>", "\n", "\r"), '-', $order->getData('store_name'));
+                $stores = explode("-", $store);
+                //$store = Mage::app()->getStore($order->getData('store_id'));
+                $fields->addChild('USER_DATA_3', $stores[0]);
+                $fields->addChild('USER_DATA_4', $stores[1]);
+                $fields->addChild('USER_DATA_5', $stores[2]);
+                $frontrequest = false;
+            }
+        }
+        if ($frontrequest) {
+            $fields->addChild('CLIENT_IP', $_SERVER['REMOTE_ADDR']);
+            $fields->addChild('USER_DATA_3', Mage::app()->getWebsite()->getName());
+            $fields->addChild('USER_DATA_4', Mage::app()->getGroup()->getName());
+            $fields->addChild('USER_DATA_5', Mage::app()->getStore()->getName());
+        }
+        $fields->addChild('USER_DATA_6', (string) Mage::getResourceModel('core/resource')->getDbVersion('ipay_setup'));
+        $fields->addChild('USER_DATA_7', Mage::getVersion());
+    }
     /**
      * Sending the request to Planet Payment
      * @return PlanetPayment_IpayGateway_Model_Xml_Request 
-     */
+    **/
     public function send() {
         $transaction = $this->getTransaction();
         if ($transaction) {
@@ -806,7 +821,7 @@ class PlanetPayment_IpayGateway_Model_Xml_Request extends PlanetPayment_IpayGate
                 $client->setRawData($transaction->asXML(), 'text/xml');
                 $client->setMethod(Zend_Http_Client::POST);
                 $response = $client->request()->getBody();
-
+                
                 //Setting response to response model object
                 $responseModel = $this->_getResponseModel();
                 $responseModel->setIpayRequest($this);
@@ -821,5 +836,4 @@ class PlanetPayment_IpayGateway_Model_Xml_Request extends PlanetPayment_IpayGate
             Mage::throwException('invalid Transaction');
         }
     }
-
 }

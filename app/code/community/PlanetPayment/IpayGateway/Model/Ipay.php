@@ -147,6 +147,8 @@ class PlanetPayment_IpayGateway_Model_Ipay extends Mage_Payment_Model_Method_Cc 
 				$exchangeRate = $paymentType == self::PAYMENT_SERVICE_PYC ? (1/$result->FIELDS->PYC_EXCHANGE_RATE) : Mage::helper('ipay')->getQuote()->getBaseToQuoteRate();
                 $payment->setStatus(self::STATUS_APPROVED);
 				$payment->setIpayExchangeRate($exchangeRate);
+				$payment->setIpayMarkup($result->FIELDS->PYC_MARKUP);
+				$payment->setIpayServiceUsed(Mage::getStoreConfig('payment/ipay/service'));
                 $payment->setLastTransId($result->FIELDS->TRANSACTION_ID);
                 if (!$payment->getParentTransactionId() || $result->FIELDS->TRANSACTION_ID != $payment->getParentTransactionId()) {
                     $payment->setTransactionId($result->FIELDS->TRANSACTION_ID);
@@ -196,6 +198,8 @@ class PlanetPayment_IpayGateway_Model_Ipay extends Mage_Payment_Model_Method_Cc 
                     ->setLastTransId($result->FIELDS->TRANSACTION_ID)
                     ->setTransactionId($result->FIELDS->TRANSACTION_ID)
                     ->setIpayExchangeRate($exchangeRate)
+					->setIpayMarkup($result->FIELDS->PYC_MARKUP)
+					->setIpayServiceUsed(Mage::getStoreConfig('payment/ipay/service'))
                     ->setIsTransactionClosed(0)
                     ->setCcTransId($result->FIELDS->P3DS_TRANSACTION_ID)
                     ->setStatus(self::STATUS_APPROVED);

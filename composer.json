@@ -1,7 +1,7 @@
 {
     "name": "OpenMageModuleFostering/planetpay_ipaygateway",
     "type": "magento-module",
-    "license": "OSL-v3.0",
+    "license": "Open-Software-License-v.-3.0-(OSL-3.0)",
     "homepage": "",
     "description": "Magento Payment Method and Currency Conversion extension to use service provided by Planet Payment.",
     "authors": [

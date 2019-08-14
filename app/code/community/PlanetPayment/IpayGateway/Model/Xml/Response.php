@@ -54,6 +54,10 @@ class PlanetPayment_IpayGateway_Model_Xml_Response extends PlanetPayment_IpayGat
                 $loggedInfo = Mage::helper('ipay')->log($requestXml, $this->_responseXml->asXML(), $this->_getRequestObject()->getCurrencyRate());
                 //This will be saved in log file if any error occured while Auth.
                 //The database transaction will be rolled back if error.
+                
+                Mage::log("Print Request : " . $loggedInfo->getRequest(), null, PlanetPayment_IpayGateway_Model_Ipay::LOG_FILE, true);
+                Mage::log("Print Response : " . $loggedInfo->getResponse(), null, PlanetPayment_IpayGateway_Model_Ipay::LOG_FILE, true);
+                
                 $this->setlogInfo("\n \t Request:" . $loggedInfo->getRequest() . "\n \t Response:" . $loggedInfo->getResponse());
             } else {
                  Mage::throwException('Invalid response');

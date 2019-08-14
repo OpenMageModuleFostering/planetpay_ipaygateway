@@ -1,0 +1,41 @@
+<?php
+/*
+
+	CTG081113
+	papdot242@gmail.com
+
+getIpayExchangeRate()
+
+*/
+
+$_order = $this->getData('order');
+
+?>
+
+<?php if($_order->getPayment()->getMethod() == 'ipay' && $_order->getPayment()->getIpayServiceUsed() == 'pyc') : ?>                  
+<td bgcolor="#EAEAEA" align="center" style="background:#EAEAEA; text-align:center; height: 65px;">
+<p style="text-align: left;">
+	<?php if($_order->getPayment()->getCcType() == 'VI'): ?>
+    	I have been offered a choice of payment currencies, including USD. This currency conversion service is offered <br /> 
+        by this merchant. * Wholesale rate <?php echo $_order->getPayment()->getIpayMarkup();?>%.
+	<?php elseif($_order->getPayment()->getCcType() == 'MC'): ?>
+		I have chosen not to use the MasterCard currency conversion process and agree that I will have no recourse against MasterCard concerning the currency conversion or its disclosure.
+	<?php endif; ?>
+</p>
+<?php else: ?>
+<td bgcolor="#EAEAEA" align="center" style="background:#EAEAEA; text-align:center;">
+<center><p style="font-size:12px; margin:0;">Thank you, <strong><?php echo Mage::app()->getStore()->getFrontendName(); ?></strong></p></center>
+<?php endif; ?>
+</td>
+
+
+
+
+
+
+
+
+
+
+
+

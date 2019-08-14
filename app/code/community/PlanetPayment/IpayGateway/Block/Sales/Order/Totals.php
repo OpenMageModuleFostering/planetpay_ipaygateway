@@ -90,18 +90,19 @@ class PlanetPayment_IpayGateway_Block_Sales_Order_Totals extends Mage_Sales_Bloc
             if($quote->getId()) {
                 $exchangeRate = $quote->getIpayExchangeRate();
                 if ($this->_isPyc() && $exchangeRate) {
-                    $total = $source->getBaseGrandTotal();
-                    $currency = Mage::app()->getLocale()->currency($this->getOrder()->getPayment()->getIpayCurrencyCode())->getSymbol() . " " . number_format($total * $exchangeRate, 2);
+                    //$total = $source->getBaseGrandTotal();
+					$total = number_format($source->getBaseGrandTotal() * $exchangeRate, 2);
+                    //$currency = Mage::app()->getLocale()->currency($this->getOrder()->getPayment()->getIpayCurrencyCode())->getSymbol() . " " . number_format($total * $exchangeRate, 2);
                 } elseif ($this->_isMcp()) {
                     $total = $source->getGrandTotal();
-                    $currency = Mage::app()->getStore()->getCurrentCurrency()->format($total, array(), true);
+                    //$currency = Mage::app()->getStore()->getCurrentCurrency()->format($total, array(), true);
                 } else {
                     $total = $source->getBaseGrandTotal();
-                    $currency = Mage::app()->getStore()->getBaseCurrency()->format($total, array(), true);
+                    //$currency = Mage::app()->getStore()->getBaseCurrency()->format($total, array(), true);
                 }
                 $this->_totals['base_grandtotal'] = new Varien_Object(array(
                             'code' => 'base_grandtotal',
-                            'value' => $currency,
+                            'value' => $total,
                             'label' => $this->__('Grand Total to be Charged'),
                             'is_formated' => true,
                         ));

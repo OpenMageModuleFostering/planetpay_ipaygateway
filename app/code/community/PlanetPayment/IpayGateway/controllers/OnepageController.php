@@ -79,7 +79,9 @@ class PlanetPayment_IpayGateway_OnepageController extends Mage_Checkout_OnepageC
                             //Checking whether the request succeed
                             if ($response->isSuccess()) {
                                 $quote->setIpayExchangeRate($response->getPycExchangeRate())
-                                        ->save();
+								->setIpayMarkup($response->getMarkUp())
+								->setIpayServiceUsed(Mage::getStoreConfig('payment/ipay/service'))
+                                ->save();
                                 //Loading Currency section if request succeed
                                 $this->loadLayout('checkout_onepage_ipay');
                                 $result['goto_section'] = 'currency_selector';
