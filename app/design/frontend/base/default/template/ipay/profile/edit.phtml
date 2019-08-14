@@ -1,0 +1,195 @@
+<?php
+/**
+ * One Pica
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to codemaster@onepica.com so we can send you a copy immediately.
+ * 
+ * @category    PlanetPayment
+ * @package     PlanetPayment_IpayGateway
+ * @copyright   Copyright (c) 2012 Planet Payment Inc. (http://www.planetpayment.com)
+ * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+
+/**
+ * Planet Payment
+ *
+ * @category   PlanetPayment
+ * @package    PlanetPayment_IpayGateway
+ * @author     One Pica Codemaster <codemaster@onepica.com>
+ */
+/**
+ * @see OnePica_IpayGateWay_Block_PaymentProfile_Edit
+ */
+?>
+<?php $profile = $this->getIpayPaymentProfile() ?>
+<?php if ($this->getTitle()): ?>
+    <div class="page-title">
+        <h1><?php echo $this->getTitle() ?></h1>
+    </div>
+<?php endif; ?>
+<?php echo $this->getMessagesBlock()->getGroupedHtml() ?>
+<form action="<?php echo $this->getPostUrl() ?>" method="post" id="form-validate">
+    <div class="fieldset">
+        <?php echo $this->getBlockHtml('formkey') ?>
+        <input type="hidden" name="profile_id" value="<?php echo $profile->getId() ?>" />
+        <input type="hidden" name="success_url" value="<?php echo $this->getSuccessUrl() ?>" />
+        <input type="hidden" name="client_id" value="<?php echo $profile->getClientId() ?>" />
+        <input type="hidden" name="account_id" value="<?php echo $profile->getAccountId() ?>" />
+        <input type="hidden" name="error_url" value="<?php echo $this->getErrorUrl() ?>" />
+        <input type="hidden" name="payment[payment_profile_id]" value="<?php echo $profile->getId() ?>" />
+        <input type="hidden" name="payment[is_visible]" value="1" />
+
+        <h2 class="legend"><?php echo $this->__('Contact Information') ?></h2>
+        <ul class="form-list">
+            <li>
+                <label for="first_name" class="required"><em>*</em><?php echo $this->__('First Name') ?></label>
+                <div class="input-box">
+                    <input type="text" name="first_name" id="first_name" title="<?php echo $this->__('First Name') ?>" value="<?php echo $this->htmlEscape($profile->getFirstName()) ?>" class="input-text required-entry" />
+                </div>
+            </li>
+            <li>
+                <label for="last_name" class="required"><em>*</em><?php echo $this->__('Last Name') ?></label>
+                <div class="input-box">
+                    <input type="text" name="last_name" id="last_name" title="<?php echo $this->__('Last Name') ?>" value="<?php echo $this->htmlEscape($profile->getLastName()) ?>" class="input-text required-entry" />
+                </div>
+            </li>
+            <li>
+                <label for="company"><?php echo $this->__('Company') ?></label>
+                <div class="input-box">
+                    <input type="text" name="company" id="company" title="<?php echo $this->__('Company') ?>" value="<?php echo $this->htmlEscape($profile->getCompany()) ?>" class="input-text" />
+                </div>
+            </li>
+            <li>
+                <label for="phone_number" class="required"><em>*</em><?php echo $this->__('Telephone') ?></label>
+                <div class="input-box">
+                    <input type="text" name="phone_number" value="<?php echo $this->htmlEscape($profile->getPhoneNumber()) ?>" title="<?php echo $this->__('Telephone') ?>" class="input-text required-entry" id="phone_number" />
+                </div>
+            </li>
+            <?php /*
+              <li>
+              <label for="fax_number"><?php echo $this->__('Fax') ?></label>
+              <div class="input-box">
+              <input type="text" name="fax_number" id="fax_number" title="<?php echo $this->__('Fax') ?>" value="<?php echo $this->htmlEscape($this->getAddress()->getFax()) ?>" class="input-text" />
+              </div>
+              </li>
+             */ ?>
+        </ul>
+    </div>
+    <div class="fieldset">
+        <h2 class="legend"><?php echo $this->__('Payment Information') ?></h2>
+        <ul class="form-list">
+            <li>
+                <label for="ipay_cc_type" class="required"><em>*</em><?php echo $this->__('Credit Card Type') ?></label>
+                <div class="input-box">
+                    <select id="ipay_cc_type" name="card_type" class="required-entry validate-cc-type-select">
+                        <option value=""><?php echo $this->__('--Please Select--') ?></option>
+                        <?php $_ccType = $profile->getData('card_type') ?>
+                        <?php foreach ($this->getCcAvailableTypes() as $_typeCode => $_typeName): ?>
+                            <option value="<?php echo $_typeCode ?>"<?php if ($_typeCode == $_ccType): ?> selected="selected"<?php endif ?>><?php echo $_typeName ?></option>
+                        <?php endforeach ?>
+                    </select>
+                </div>
+            </li>
+            <li>
+                <label for="ipay_cc_number" class="required"><em>*</em><?php echo $this->__('Credit Card Number') ?></label>
+                <div class="input-box">
+                    <?php $cardNum = $profile->getCardNumberLast4() ? 'XXXX' . $profile->getCardNumberLast4() : '' ?>
+                    <input type="text" id="ipay_cc_number" name="card_number" title="<?php echo $this->__('Credit Card Number') ?>" class="input-text validate-cc-number validate-cc-type" value="<?php echo $cardNum ?>" />
+                </div>
+            </li>
+            <li>
+                <label for="ipay_expiration" class="required"><em>*</em><?php echo $this->__('Expiration Date') ?></label>
+                <div class="input-box">
+                    <div class="v-fix">
+                        <?php $_ccExpMonth = $profile->getExpirationMonth() ?>
+                        <select id="ipay_expiration" name="expiration_month" class="month validate-cc-exp required-entry" style="width: auto;">
+                            <?php foreach ($this->getCcMonths() as $k => $v): ?>
+                                <option value="<?php echo $k ? $k : '' ?>"<?php if ($k == $_ccExpMonth): ?> selected="selected"<?php endif ?>><?php echo $v ?></option>
+                            <?php endforeach ?>
+                        </select>
+                    </div>
+                    <div class="v-fix" style="margin-left: 5px;">
+                        <?php $_ccExpYear = $profile->getExpirationYear() ?>
+                        <select id="ipay_expiration_yr" name="expiration_year" class="year required-entry" style="width: auto;">
+                            <?php foreach ($this->getCcYears() as $k => $v): ?>
+                                <option value="<?php echo $k ? $k : '' ?>"<?php if ($k == $_ccExpYear): ?> selected="selected"<?php endif ?>><?php echo $v ?></option>
+                            <?php endforeach ?>
+                        </select>
+                    </div>
+                </div>
+            </li>
+            <?php if ($this->hasVerification()): ?>
+                <li>
+                    <label for="ipay_cc_cid" class="required"><em>*</em><?php echo $this->__('Card Verification Number') ?></label>
+                    <div class="input-box">
+                        <div class="v-fix">
+                            <?php $_ccCid = $profile->getId() ? 'XXX' : '' ?>
+                            <input type="text" id="ipay_cc_cid" name="card_code" title="<?php echo $this->__('Card Verification Number') ?>" class="input-text cvv required-entry validate-cc-cvn" value="<?php echo $_ccCid ?>" />
+                        </div>
+                    </div>
+                </li>
+            <?php endif; ?>
+        </ul>
+    </div>
+    <div class="fieldset">
+        <h2 class="legend"><?php echo $this->__('Address') ?></h2>
+        <ul class="form-list">
+            <li>
+                <label for="address" class="required"><em>*</em><?php echo $this->__('Address') ?></label>
+                <div class="input-box">
+                    <input type="text" name="address" value="<?php echo $this->htmlEscape($profile->getAddress()) ?>" title="<?php echo $this->__(' Address') ?>" id="address" class="input-text required-entry" />
+                </div>
+            </li>
+            <li>
+                <label for="city" class="required"><em>*</em><?php echo $this->__('City') ?></label>
+                <div class="input-box">
+                    <input type="text" name="city" value="<?php echo $this->htmlEscape($profile->getCity()) ?>"  title="<?php echo $this->__('City') ?>" class="input-text required-entry" id="city" />
+                </div>
+            </li>
+            <li>
+                <label for="state" class="required"><em>*</em><?php echo $this->__('State/Province') ?></label>
+                <div class="input-box">
+                    <select id="state" name="state" title="<?php echo $this->__('State/Province') ?>" class="validate-select" style="display:none;">
+                        <option value=""><?php echo $this->__('Please select region, state or province') ?></option>
+                    </select>
+                    <script type="text/javascript">
+                        //<![CDATA[
+                        $('state').setAttribute('defaultValue',  "<?php echo $profile->getState() ?>");
+                        //]]>
+                    </script>
+                    <input type="text" id="region" name="region" value="<?php echo $this->htmlEscape($profile->getState()) ?>"  title="<?php echo $this->__('State/Province') ?>" class="input-text" style="display:none;" />
+                </div>
+            </li>
+            <li>
+                <label for="zip" class="required"><em>*</em><?php echo $this->__('Zip/Postal Code') ?></label>
+                <div class="input-box">
+                    <input type="text" name="zip" value="<?php echo $this->htmlEscape($profile->getZip()) ?>" title="<?php echo $this->__('Zip/Postal Code') ?>" id="zip" class="input-text validate-zip-international required-entry" />
+                </div>
+            </li>
+            <label for="country" class="required"><em>*</em><?php echo $this->__('Country') ?></label>
+            <div class="input-box">
+                <?php echo $this->getCountryHtmlSelect($profile->getCountry(), 'country') ?>
+            </div>
+            </li>
+        </ul>
+    </div>
+    <div class="buttons-set">
+        <p class="required"><?php echo $this->__('* Required Fields') ?></p>
+        <p class="back-link"><a href="<?php echo $this->escapeUrl($this->getBackUrl()) ?>"><small>&laquo; </small><?php echo $this->__('Back') ?></a></p>
+        <button type="submit" title="<?php echo $this->__('Save Stored Credit Card') ?>" class="button"><span><span><?php echo $this->__('Save Stored Credit Card') ?></span></span></button>
+    </div>
+</form>
+<script type="text/javascript">
+    //<![CDATA[
+    var dataForm = new VarienForm('form-validate', true);
+    new RegionUpdater('country', 'region', 'state', <?php echo $this->getRegionsJs() ?>, undefined, 'zip');
+    //]]>
+</script>

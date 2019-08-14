@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <modules>
+        <PlanetPayment_IpayGateway>
+            <active>true</active>
+            <codePool>community</codePool>
+            <depends>
+                <Mage_Adminhtml />
+                <Mage_Checkout />
+                <Mage_Customer />
+                <Mage_Payment />
+            </depends>
+        </PlanetPayment_IpayGateway>		
+    </modules>
+</config>

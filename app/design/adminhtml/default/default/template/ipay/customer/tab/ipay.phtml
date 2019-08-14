@@ -1,0 +1,58 @@
+<?php
+/**
+ * One Pica
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to codemaster@onepica.com so we can send you a copy immediately.
+ * 
+ * @category    PlanetPayment
+ * @package     PlanetPayment_IpayGateway
+ * @copyright   Copyright (c) 2012 Planet Payment Inc. (http://www.planetpayment.com)
+ * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+
+/**
+ * Planet Payment
+ *
+ * @category   PlanetPayment
+ * @package    PlanetPayment_IpayGateway
+ * @author     One Pica Codemaster <codemaster@onepica.com>
+ */
+
+$ipayProfileId = $this->getIpayProfileId();
+if (!$ipayProfileId) {
+    $ipayProfileId = $this->__('Not registered with Planet Payment');
+}
+?>
+<div class="entry-edit">
+    <div class="entry-edit-head"><h4 class="icon-head"><?php echo Mage::helper('ipay')->__('Planet Payment Payment Profiles') ?></h4></div>
+    <fieldset>
+        <?php $profiles = $this->getCimPaymentProfiles() ?>
+        <?php if (count($profiles)) { ?>
+            <?php $count = 1; ?>
+            <?php foreach ($profiles as $profile) { ?>
+                <div class="<?php echo ($count % 2 == 1 ? 'box-left' : 'box-right') ?>">
+                    <button type="button" style="float: right;" class="scalable delete" onclick="deleteConfirm('Are you sure?', '<?php echo $this->getIpayProfileDeleteUrl($profile) ?>')"><span><?php echo $this->__('Delete Payment Profile') ?></span></button>
+                    <strong><?php echo $this->__('Ipay Profile Client Id:') ?></strong> <?php echo $profile->getClientId() ?><br/>
+                    <strong><?php echo $this->__('Ipay Profile Account Id:') ?></strong> <?php echo $profile->getAccountId() ?>
+                    <div style="margin-top: 5px;">
+                        <?php echo $profile->toHtml(true, false) ?>
+                    </div>	
+                </div>
+                <?php if ($count % 2 == 0) { ?>
+                    <div style="height: 10px; clear: both;"></div>
+                <?php } ?>
+                <?php $count++; ?>
+            <?php } ?>
+        <?php } else { ?>
+            <em><?php echo $this->__('No Planet Payment Profile registered.') ?></em>
+        <?php } ?>
+    </fieldset>
+</div>

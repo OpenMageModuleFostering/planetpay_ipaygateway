@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout version="0.1.0">
+    <adminhtml_sales_order_create_index>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/ipay/ipay.js</name>
+            </action>
+        </reference>
+    </adminhtml_sales_order_create_index>
+    <ipayadmin_adminhtml_checkout_getIpayCurrencies>
+        <block type="ipay/adminhtml_checkout_ipay" name="root" output="toHtml" template="ipay/checkout/currency_selector.phtml"/>
+    </ipayadmin_adminhtml_checkout_getIpayCurrencies>
+</layout>

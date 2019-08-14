@@ -1,0 +1,386 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * One Pica
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to codemaster@onepica.com so we can send you a copy immediately.
+ * 
+ * @category    PlanetPayment
+ * @package     PlanetPayment_IpayGateway
+ * @copyright   Copyright (c) 2012 Planet Payment Inc. (http://www.planetpayment.com)
+ * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+
+/**
+ * Planet Payment
+ *
+ * @category   PlanetPayment
+ * @package    PlanetPayment_IpayGateway
+ * @author     One Pica Codemaster <codemaster@onepica.com>
+ */
+-->
+<config>
+    <sections>
+        <payment>
+            <groups>
+                <ipay translate="label">
+                    <label>Planet Payment iPAY Gateway</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>100</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>0</show_in_store>
+                    <fields>
+                        <active translate="label">
+                            <label>Enable</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>0</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </active>
+                        <title translate="label">
+                            <label>Title</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </title>
+                        <payment_action translate="label">
+                            <label>Payment Action</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>ipay/system_config_payment_paymentAction</source_model>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </payment_action>
+                        <order_status translate="label">
+                            <label>New order status</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_order_status_processing</source_model>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </order_status>
+                        <currency translate="label">
+                            <label>Native Currency</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>ipay/system_config_payment_currency</source_model>
+                            <sort_order>4</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </currency>
+                        <accepted_currencies translate="label">
+                            <label>Accepted currency</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <source_model>adminhtml/system_config_source_currency</source_model>
+                            <sort_order>5</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </accepted_currencies>
+                        <service translate="label">
+                            <label>Service</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>ipay/system_config_payment_service</source_model>
+                            <sort_order>6</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <comment><![CDATA[
+                                PYC: Used for single-currency Magento 
+                                installations allowing customers to pay in the 
+                                currency their credit card is registered in (only works with Visa and Mastercard). 
+                                <BR />MCP: Used for multi-currency Magento installations
+                                requiring customers to pay in the currency 
+                                presented in the store with prices set by the Currency
+                                Conversion function.]]>
+                            </comment>
+                        </service>
+                        <cctypes translate="label">
+                            <label>Credit Card Types</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <source_model>ipay/system_config_payment_cctype</source_model>
+                            <sort_order>7</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </cctypes>
+                        <tokenize translate="label">
+                            <label>Store/Tokenize Credit Cards</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_enabledisable</source_model>
+                            <sort_order>8</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <comment>
+                                Recommended. Allows customers to securely store 
+                                cards for future use and enables admin post-order 
+                                edits without re-collecting credit cards.
+                            </comment>
+                        </tokenize>
+                        <logging translate="label">
+                            <label>Logging</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_enabledisable</source_model>
+                            <sort_order>9</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <comment>
+                                Recommended. Disable to suppress logging of 
+                                payment processing transactions even if global 
+                                logging is enabled in General > Planet Payment
+                            </comment>
+                        </logging>
+                        <allowspecific translate="label">
+                            <label>Payment from Applicable Countries</label>
+                            <frontend_type>allowspecific</frontend_type>
+                            <sort_order>10</sort_order>
+                            <source_model>adminhtml/system_config_source_payment_allspecificcountries</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </allowspecific>
+                        <specificcountry translate="label">
+                            <label>Payment from Specific Countries</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <sort_order>11</sort_order>
+                            <source_model>adminhtml/system_config_source_country</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </specificcountry>
+                        <min_order_total translate="label">
+                            <label>Minimum Order Total</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>12</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </min_order_total>
+                        <max_order_total translate="label">
+                            <label>Maximum Order Total</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>13</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </max_order_total>
+                        <system_purge translate="comment">
+                            <label></label>
+                            <frontend_model>ipay/adminhtml_system_config_purge</frontend_model>
+                            <sort_order>200</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <comment>
+                                <![CDATA[<strong style="color: red;">WARNING:
+                                </strong> This will purge all payment
+                                profiles and Planet Payment customer 
+                                data from Magento. Typically this is run 
+                                after switching from a test account to a 
+                                production account. This action cannot be 
+                                undone.]]>
+                            </comment>
+                        </system_purge>
+                    </fields>
+                </ipay>
+            </groups>
+        </payment>
+        <planet_payment translate="label">
+            <label>Planet Payment</label>
+            <tab>general</tab>
+            <frontend_type>text</frontend_type>
+            <sort_order>100</sort_order>
+            <show_in_default>1</show_in_default>
+            <show_in_website>1</show_in_website>
+            <show_in_store>1</show_in_store>
+            <groups>
+                <ipay_general translate="label">
+                    <label>General</label>
+                    <frontend_type>text</frontend_type>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>0</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <url translate="label">
+                            <label>URL</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>ipay/system_config_general_mode</source_model>
+                            <sort_order>0</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </url>
+                        <key translate="label">
+                            <label>Company Key</label>
+                            <frontend_type>text</frontend_type>
+                            <validate>required-entry</validate>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <comment>Required.</comment>
+                        </key>
+                        <terminal_id translate="label">
+                            <label>Terminal Id</label>
+                            <frontend_type>text</frontend_type>
+                            <validate>required-entry</validate>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <comment>Required.</comment>
+                        </terminal_id>
+                        <pin translate="label">
+                            <label>PIN</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <validate>validate-number</validate>
+                            <!-- Commented Code, A conflicting info found in tech spec-->
+                            <comment>4-digit numeric value required when Encryption is disabled</comment>
+                        </pin>
+                        <encryption translate="label">
+                            <label>Encryption</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_enabledisable</source_model>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <comment>Recommended.</comment>
+                        </encryption>
+                        <encryption_type translate="label">
+                            <label>Encryption Type</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>ipay/system_config_general_encryption</source_model>
+                            <sort_order>4</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <encryption>1</encryption>
+                            </depends>
+                        </encryption_type>
+                        <encryption_key translate="label">
+                            <label>Encryption Key</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>5</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <encryption>1</encryption>
+                            </depends>
+                        </encryption_key>
+                        <!--config_test translate="comment">
+                            <label></label>
+                            <frontend_model>ipay/adminhtml_system_config_test</frontend_model>
+                            <sort_order>6</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </config_test-->
+                    </fields>
+                </ipay_general>
+                <ipay_logging translate="label">
+                    <label>Logging</label>
+                    <frontend_type>text</frontend_type>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>1</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <mode translate="label">
+                            <label>Log Mode</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_enabledisable</source_model>
+                            <sort_order>0</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <comment>
+                                Recommended. Credit card numbers will be truncated
+                                to the final four digits, and CVV numbers will be omitted.
+                            </comment>
+                        </mode>
+                        <lifetime translate="label">
+                            <label>Log Entry Lifetime</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <validate>required-entry</validate>
+                            <comment>
+                                Required. Days before entries are autopurged.
+                                Smaller numbers recommended for high-traffic stores.
+                            </comment>
+                        </lifetime>
+                        <export translate="comment">
+                            <label></label>
+                            <frontend_model>ipay/adminhtml_system_config_export</frontend_model>
+                            <sort_order>6</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </export>
+                    </fields>
+                </ipay_logging>
+            </groups>
+        </planet_payment>
+        <currency>
+            <groups>
+                <ipay translate="label">
+                    <label>Planet payment</label>
+                    <frontend_type>text</frontend_type>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>0</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <logging translate="label">
+                            <label>Logging</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_enabledisable</source_model>
+                            <sort_order>0</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <comment>
+                                Recommended. Disable to suppress logging of 
+                                payment processing transactions even if global 
+                                logging is enabled in General > Planet Payment
+                            </comment>
+                        </logging>
+                    </fields>
+                </ipay>
+            </groups>
+        </currency>
+    </sections>
+    <currency_convertor>
+            
+    </currency_convertor>
+</config>

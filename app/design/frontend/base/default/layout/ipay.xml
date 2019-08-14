@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+
+<!-- Customer Account handles -->
+    <customer_account>
+        <reference name="customer_account_navigation">
+            <action method="addLink" translate="label" module="ipay" ifconfig="payment/ipay/active">
+                <name>ipay_profile</name>
+                <path>ipay/profile</path>
+                <label>Stored Credit Card Profiles</label>
+            </action>
+        </reference>
+    </customer_account>
+
+    <ipay_profile_index>
+        <update handle="customer_account" />
+        <reference name="my.account.wrapper">
+            <block type="ipay/profile_list" name="ipay.profile.list" template="ipay/profile/list.phtml" />
+        </reference>
+    </ipay_profile_index>
+
+    <ipay_profile_edit>
+        <update handle="customer_account" />
+        <reference name="my.account.wrapper">
+            <block type="ipay/profile_edit" name="ipay.profile.edit" template="ipay/profile/edit.phtml" />
+        </reference>
+    </ipay_profile_edit>
+    <checkout_onepage_index>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/ipay/validation.js</name>
+            </action>
+        </reference>
+        <reference name="checkout.onepage">
+            <block type="ipay/onepage_ipay" name="checkout.onepage.ipay.currency.selector" as="currency_selector" after="checkout.onepage.payment" template="ipay/checkout/onepage/currency_selector.phtml"/>		
+        </reference>
+    </checkout_onepage_index>
+    <checkout_onepage_ipay>
+        <remove name="right"/>
+        <remove name="left"/>
+        <block type="ipay/onepage_ipay" name="root" output="toHtml" template="ipay/checkout/onepage/currency_selector.phtml"/>
+    </checkout_onepage_ipay>
+</layout>
