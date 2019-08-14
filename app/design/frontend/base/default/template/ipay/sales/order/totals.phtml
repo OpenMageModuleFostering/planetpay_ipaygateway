@@ -56,9 +56,11 @@
     <?php else: ?>
     	<?php 
 		
-		//$_grand_total_p = Mage::getModel('directory/currency')->format($_total->getValue(),array('display'=>Zend_Currency::NO_SYMBOL), false);
+		//$_grand_total_p = Mage::getModel('directory/currency')->formatTxt($_total->getValue(),array('display'=>Zend_Currency::NO_SYMBOL));
 		
-		$_grand_total_p = $_total->getValue(); ?>
+		$_grand_total_p = floatval(ereg_replace("[^-0-9\.]","",$_total->getValue())); 
+		
+		?>
 	<?php endif?>
 <?php endforeach?>
 

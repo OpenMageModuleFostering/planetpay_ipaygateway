@@ -41,7 +41,6 @@
         <remove name="left"/>
         <block type="ipay/onepage_ipay" name="root" output="toHtml" template="ipay/checkout/onepage/currency_selector.phtml"/>
     </checkout_onepage_ipay>
-	
 	<sales_email_order_items>
 		<reference name="order_totals">
 			<action method="setTemplate">                

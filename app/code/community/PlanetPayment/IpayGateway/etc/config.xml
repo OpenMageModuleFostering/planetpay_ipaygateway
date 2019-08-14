@@ -30,7 +30,7 @@
 <config>
     <modules>
         <PlanetPayment_IpayGateway>
-            <version>1.0.7</version>
+            <version>1.0.9</version>
         </PlanetPayment_IpayGateway>
     </modules>
     <global>
